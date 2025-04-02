@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ESP32 Sensor Data</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    .data, .calibration { margin-top: 20px; }
+    input { margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Sensor Data</h1>
+  <div class="data">
+    <p>ID: <span id="sensorID">N/A</span></p>
+    <p>Sensor Name: <span id="sensorName">N/A</span></p>
+    <p>Sensor Value: <span id="sensorValue">N/A</span></p>
+    <p>Calib Zero: <span id="oldCalibZero">N/A</span></p>
+    <p>Calib Spand: <span id="oldCalibSpand">N/A</span></p>
+  </div>
+
+  <div class="calibration">
+    <h2>Send Calibration Data</h2>
+    <form id="calibForm">
+      <label for="calibZero">Calib Zero:</label>
+      <input type="number" id="calibZero" name="calibZero" required><br>
+      <label for="calibSpand">Calib Spand:</label>
+      <input type="number" id="calibSpand" name="calibSpand" required><br>
+      <button type="submit">Send Calibration Data</button>
+    </form>
+    <button id="interruptBtn">Trigger Interrupt</button>
+  </div>
+
+  <!-- Load Socket.IO client library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Listen for incoming Modbus data from the server
+    socket.on('modbusData', (data) => {
+      // You may add additional fields as needed; here we simply display the values
+      document.getElementById('sensorID').innerText = "1"; // Static example ID
+      document.getElementById('sensorName').innerText = "Sensor"; // Static example name
+      document.getElementById('sensorValue').innerText = data.sensorValue;
+      document.getElementById('oldCalibZero').innerText = data.calibZero;
+      document.getElementById('oldCalibSpand').innerText = data.calibSpand;
+    });
+
+    // Handle the calibration form submission
+    const form = document.getElementById('calibForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const calibZero = parseInt(document.getElementById('calibZero').value, 10);
+      const calibSpand = parseInt(document.getElementById('calibSpand').value, 10);
+      
+      // Emit calibration data to the server
+      socket.emit('calibrationData', { calibZero, calibSpand });
+      form.reset();
+    });
+
+    // Handle interrupt button click
+    document.getElementById('interruptBtn').addEventListener('click', () => {
+      socket.emit('triggerInterrupt');
+    });
+  </script>
+</body>
+</html>

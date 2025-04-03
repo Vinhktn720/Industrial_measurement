@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import { startPolling, writeCalibrationData, triggerInterrupt } from './modbusHandler.js';
+import { startPolling, writeCalibrationData, triggerInterrupt } from './testModbusHandler.js';
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -20,8 +20,8 @@ io.on('connection', (clientSocket) => {
 
   // Handle calibration data from the UI
   clientSocket.on('calibrationData', async (data) => {
-    const { calibZero, calibSpand } = data;
-    await writeCalibrationData(calibZero, calibSpand);
+    const { sensorId, calibZero, calibSpand } = data;
+    await writeCalibrationData(sensorId, calibZero, calibSpand);
   });
 
   // Handle interrupt trigger from the UI
@@ -31,6 +31,6 @@ io.on('connection', (clientSocket) => {
 });
 
 // Start HTTP server on port 3000
-httpServer.listen(3000, () => {
+httpServer.listen(3001, () => {
   console.log("Server listening on port 3000");
 });

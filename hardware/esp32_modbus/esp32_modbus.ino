@@ -56,13 +56,19 @@ void setup() {
 
   // Start the Modbus TCP Server
   mb.server();
-  mb.addHreg(0, 0, 4);  // Add 4 holding registers
+  mb.addHreg(0, 0, 10);  // Add 10 holding registers
 
   // Set initial register values
-  mb.Hreg(0, 0);  // sensorValue
+  mb.Hreg(0, 0);  // sensorValue1
   mb.Hreg(1, Zero);  // Load saved Zero
   mb.Hreg(2, Spand); // Load saved Spand
-  mb.Hreg(3, 0);  // Interrupt request flag
+  mb.Hreg(3, 0);   // sensorValue2
+  mb.Hreg(4, Zero);  // Load saved Zero
+  mb.Hreg(5, Spand);  // Load saved Spand
+  mb.Hreg(6, 0); // sensorValue3
+  mb.Hreg(7, Zero);  // Load saved Zero
+  mb.Hreg(8, Spand);  // Load saved Spand
+  mb.Hreg(9, 0);  // Trigger receive data
 }
 
 void loop() {
@@ -70,7 +76,7 @@ void loop() {
 
   Zero = mb.Hreg(1);
   Spand = mb.Hreg(2);
-  intReq = mb.Hreg(3);
+  intReq = mb.Hreg(9);
   if (intReq != 0) {
     Serial.println("Interrupt request received!");
     
@@ -84,12 +90,11 @@ void loop() {
     EEPROM.put(EEPROM_ZERO_ADDR, Zero);
     EEPROM.put(EEPROM_SPAND_ADDR, Spand);
     EEPROM.commit();
-
     Serial.println("Updated Calibration Data:");
     Serial.print("Zero: "); Serial.println(Zero);
     Serial.print("Spand: "); Serial.println(Spand);
 
-    mb.Hreg(3, 0);  // Clear the interrupt flag
+    mb.Hreg(9, 0);  // Clear the interrupt flag
   }
 
   // Read ADC every 1 second

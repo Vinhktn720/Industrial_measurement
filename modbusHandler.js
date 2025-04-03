@@ -1,7 +1,7 @@
 import Modbus from 'jsmodbus';
 import net from 'net';
 
-const espIP = '192.168.1.24'; // Change to your ESP32 IP address
+const espIP = '192.168.1.25'; // Change to your ESP32 IP address
 const modbusPort = 502;
 const unitId = 1;
 
@@ -22,12 +22,32 @@ function startPolling(onData) {
   if (pollIntervalHandle) clearInterval(pollIntervalHandle);
   pollIntervalHandle = setInterval(async () => {
     try {
-      const res = await modbusClient.readHoldingRegisters(0, 4);
-      const sensorValue = res.response.body.values[0];
-      const calibZero = res.response.body.values[1];
-      const calibSpand = res.response.body.values[2];
-      const intRequest = res.response.body.values[3];
-      const modbusData = { sensorValue, calibZero, calibSpand, intRequest };
+      const res = await modbusClient.readHoldingRegisters(0, 10);
+      const sensors = [
+        {
+          id: 1,
+          name: "Sensor 1",
+          sensorValue: res.response.body.values[0],
+          calibZero: res.response.body.values[1],
+          calibSpand: res.response.body.values[2]
+        },
+        {
+          id: 2,
+          name: "Sensor 2",
+          sensorValue: res.response.body.values[3],
+          calibZero: res.response.body.values[4],
+          calibSpand: res.response.body.values[5]
+        },
+        {
+          id: 3,
+          name: "Sensor 3",
+          sensorValue: res.response.body.values[6],
+          calibZero: res.response.body.values[7],
+          calibSpand: res.response.body.values[8]
+        }
+      ];
+      const intRequest = res.response.body.values[9]; // Read interrupt request value
+      const modbusData = {sensors, intRequest };
       onData(modbusData); // Emit data to the callback
     } catch (err) {
       console.error("Modbus error:", err.message);
@@ -79,15 +99,36 @@ socket.connect({ host: espIP, port: modbusPort }, () => {
 });
 
 // Write calibration data
-async function writeCalibrationData(calibZero, calibSpand) {
+async function writeCalibrationData( sensorId, calibZero, calibSpand ) {
   try {
-    await modbusClient.writeSingleRegister(3, 1);
-    await modbusClient.writeSingleRegister(1, calibZero);
-    await modbusClient.writeSingleRegister(2, calibSpand);
-    await modbusClient.writeSingleRegister(3, 1);
-    await modbusClient.writeSingleRegister(1, calibZero);
-    await modbusClient.writeSingleRegister(2, calibSpand);
-    console.log("Calibration data written:", calibZero, calibSpand);
+    // Determine the register offsets based on the sensor ID
+    let zeroRegister, spandRegister;
+
+    switch (sensorId) {
+      case 1:
+        zeroRegister = 1; // Register for Sensor 1 Zero
+        spandRegister = 2; // Register for Sensor 1 Span
+        break;
+      case 2:
+        zeroRegister = 4; // Register for Sensor 2 Zero
+        spandRegister = 5; // Register for Sensor 2 Span
+        break;
+      case 3:
+        zeroRegister = 7; // Register for Sensor 3 Zero
+        spandRegister = 8; // Register for Sensor 3 Span
+        break;
+      default:
+        throw new Error(`Invalid sensor ID: ${sensorId}`);
+    }
+    await modbusClient.writeSingleRegister(9, 1);
+    await modbusClient.writeSingleRegister(zeroRegister, calibZero);
+    await modbusClient.writeSingleRegister(spandRegister, calibSpand);
+    await modbusClient.writeSingleRegister(9, 1);
+    await modbusClient.writeSingleRegister(zeroRegister, calibZero);
+    await modbusClient.writeSingleRegister(spandRegister, calibSpand);
+    console.log(
+      `Calibration data written for Sensor ${sensorId}: Zero=${calibZero}, Span=${calibSpand}`
+    );
   } catch (err) {
     console.error("Error writing calibration data:", err.message);
   }
@@ -96,7 +137,7 @@ async function writeCalibrationData(calibZero, calibSpand) {
 // Trigger interrupt
 async function triggerInterrupt() {
   try {
-    await modbusClient.writeSingleRegister(3, 1);
+    await modbusClient.writeSingleRegister(9, 1);
     console.log("Interrupt triggered on ESP32");
   } catch (err) {
     console.error("Error triggering interrupt:", err.message);

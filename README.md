@@ -1,4 +1,4 @@
-"# **MODBUS Using ESP32**  
+## **MODBUS Using ESP32**  
 
 This project demonstrates a **MODBUS TCP Server** running on an **ESP32**, designed for a school project. The system supports a **calibration process for three sensors** and communicates with a **Node.js client** via **WebSockets** for real-time monitoring and control.  
 
@@ -15,18 +15,11 @@ This project demonstrates a **MODBUS TCP Server** running on an **ESP32**, desig
 
 ## 🖥️ ESP32 (MODBUS TCP Server)
 
-
-    Runs as a MODBUS TCP server to handle sensor data and calibration logic.
-
-    Supports three different sensors with real-time data updates.
-
-    Communicates with the Node.js client over Wi-Fi using the MODBUS TCP protocol.
-
-## 🌐 Node.js Client (MODBUS Client & WebSocket Server)
-
-    Acts as a WebSocket server, forwarding sensor data from the ESP32 to the UI.
-
-    Provides an interactive interface for calibration and monitoring.
+Runs as a MODBUS TCP server to handle sensor data and calibration logic.
+Supports three different sensors with real-time data updates.
+Communicates with the Node.js client over Wi-Fi using the MODBUS TCP protocol.
+Acts as a WebSocket server, forwarding sensor data from the ESP32 to the UI.
+Provides an interactive interface for calibration and monitoring.
 
 ## 🚀 Features
 
@@ -39,19 +32,19 @@ This project demonstrates a **MODBUS TCP Server** running on an **ESP32**, desig
 ### 1️⃣ ESP32 Setup
 
 
-    Flash the ESP32 with the MODBUS server code (/hardware).
+- Flash the ESP32 with the MODBUS server code (/hardware).
 
-    Ensure the ESP32 is connected to your Wi-Fi network.
+- Ensure the ESP32 is connected to your Wi-Fi network.
 
 ### 2️⃣ Node.js Client Setup
 
-    Navigate to the modbus-server directory:
+Navigate to the modbus-server directory:
 
-cd modbus-server
+    cd modbus-server
 
 Install dependencies:
 
-npm install
+    npm install
 
 Start the server:
 

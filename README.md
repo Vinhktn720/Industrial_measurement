@@ -24,8 +24,11 @@ Provides an interactive interface for calibration and monitoring.
 ## 🚀 Features
 
 ✔ MODBUS TCP Server running on ESP32.
+
 ✔ Real-time communication between ESP32 and Node.js using WebSockets.
+
 ✔ Interactive Web UI to monitor and calibrate sensors.
+
 ✔ Three sensor calibration system with zero and span adjustments.
 ## 📌 Installation & Setup
 

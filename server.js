@@ -31,6 +31,6 @@ io.on('connection', (clientSocket) => {
 });
 
 // Start HTTP server on port 3000
-httpServer.listen(3001, () => {
+httpServer.listen(3000, () => {
   console.log("Server listening on port 3000");
 });

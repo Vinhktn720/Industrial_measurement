@@ -27,6 +27,12 @@
         <option value="2">Sensor 2</option>
         <option value="3">Sensor 3</option>
       </select><br>
+      <label for="sensorNameInput">Name:</label>
+      <select id="sensorNameInput" name="sensorNameInput">
+        <option value="Potentiometer">Potentiometer</option>
+        <option value="Load cell">Load cell</option>
+        <option value="Thermistor">Thermistor</option>
+      </select><br>
       <label for="calibZero">Calib Zero:</label>
       <input type="number" id="calibZero" name="calibZero" required><br>
       <label for="calibSpand">Calib Spand:</label>
@@ -67,6 +73,7 @@
             document.getElementById(`sensorValue${id}`).innerText = sensorValue;
             document.getElementById(`oldCalibZero${id}`).innerText = calibZero;
             document.getElementById(`oldCalibSpand${id}`).innerText = calibSpand;
+            document.getElementById(`sensorName${id}`).innerText = sensor.name; // cập nhật name
           }
         });
       }
@@ -78,7 +85,8 @@
       const sensorId = parseInt(document.getElementById("sensorIdSelect").value, 10);
       const calibZero = parseInt(document.getElementById("calibZero").value, 10);
       const calibSpand = parseInt(document.getElementById("calibSpand").value, 10);
-      socket.emit("calibrationData", { sensorId, calibZero, calibSpand });
+      const name = document.getElementById("sensorNameInput").value; // <-- FIXED LINE
+      socket.emit("calibrationData", { sensorId, calibZero, calibSpand, name });
       this.reset();
     });
 

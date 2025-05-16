@@ -12,6 +12,8 @@ app.use(express.static('public'));
 // Handle UI connections via Socket.IO
 io.on('connection', (clientSocket) => {
   console.log("UI client connected");
+  
+  // Gửi cấu hình cảm biến ban đầu
 
   // Send Modbus data to the UI
   startPolling((modbusData) => {
@@ -20,8 +22,8 @@ io.on('connection', (clientSocket) => {
 
   // Handle calibration data from the UI
   clientSocket.on('calibrationData', async (data) => {
-    const { sensorId, calibZero, calibSpand } = data;
-    await writeCalibrationData(sensorId, calibZero, calibSpand);
+    const { sensorId, calibZero, calibSpand, name } = data;
+    await writeCalibrationData(sensorId, calibZero, calibSpand, name);
   });
 
   // Handle interrupt trigger from the UI

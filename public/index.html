@@ -1,99 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>ESP32 Sensor Data</title>
-  <style>
-    body { font-family: sans-serif; margin: 20px; }
-    h1 { color: #333; }
-    .sensor-container { display: flex; flex-wrap: wrap; gap: 20px; }
-    .sensor-card { border: 1px solid #ccc; padding: 15px; border-radius: 10px; width: 220px; }
-    input { margin: 5px; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&family=Titan+One&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 </head>
+
 <body>
-  <h1>ESP32 Sensor Data</h1>
+  <div class="wrapper center">
+    <h1>External Project - Industrial Instrumentation</h1>
+    <h4 class="cre">UI by GHP</h4>
+    <div class="sect rcenter">
+      <div class="trackBtn center sel">
+        <i class="fa-solid fa-tv"></i>
+      </div>
+      <div class="calibBtn center">
+        <i class="fa-solid fa-gears"></i>
+      </div>
+      <div class="aboutBtn center">
+        <i class="fa-solid fa-user"></i>
+      </div>
+      <div class="sectbg"></div>
+    </div>
 
-  <div class="sensor-container" id="sensorContainer">
-    <!-- Sensors will be added dynamically here -->
-  </div>
+    <div class="modeWrap center">
+      <div class="track swiper sel">
+        <div class="slider">
+          <div class="sensor-container swiper-wrapper" id="sensorContainer">
 
-  <div class="calibration">
-    <h2>Send Calibration Data</h2>
-    <form id="calibForm">
-      <label for="sensorIdSelect">Sensor:</label>
-      <select id="sensorIdSelect">
-        <option value="1">Sensor 1</option>
-        <option value="2">Sensor 2</option>
-        <option value="3">Sensor 3</option>
-      </select><br>
-      <label for="sensorNameInput">Name:</label>
-      <select id="sensorNameInput" name="sensorNameInput">
-        <option value="Potentiometer">Potentiometer</option>
-        <option value="Load cell">Load cell</option>
-        <option value="Thermistor">Thermistor</option>
-      </select><br>
-      <label for="calibZero">Calib Zero:</label>
-      <input type="number" id="calibZero" name="calibZero" required><br>
-      <label for="calibSpand">Calib Spand:</label>
-      <input type="number" id="calibSpand" name="calibSpand" required><br>
-      <button type="submit">Send Calibration Data</button>
-    </form>
-    <button id="interruptBtn">Trigger Interrupt</button>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="prevBtn swiper-button-prev"></div>
+          <div class="nextBtn swiper-button-next"></div>
+        </div>
+      </div>
+
+      <div class="calib center">
+        <h2>Choose a Sensor to calibrate:</h2>
+        <div class="sensorPage rcenter">
+          <div class="page center">1</div>
+          <div class="page center">2</div>
+          <div class="page center">3</div>
+          <div class="pagebg"></div>
+        </div>
+        <select id="sensorNameInput" name="sensorNameInput">
+          <option value="Potentiometer">Potentiometer</option>
+          <option value="Load cell">Load cell</option>
+          <option value="Thermistor">Thermistor</option>
+        </select>
+        <div class="filinfo">
+          <input type="number" autocomplete="off" id='calibZero' required>
+          <span><strong>Zero</strong></span>
+        </div>
+        <div class="filinfo">
+          <input type="number" autocomplete="off" id='calibSpan' required="required">
+          <span><strong>Span</strong></span>
+        </div>
+        <div class="btnwrap rcenter">
+          <button id="submitBtn">Send Calibration Data</button>
+          <button id="interruptBtn">Trigger Interrupt</button>
+        </div>
+      </div>
+
+      <div class="about center">
+        <div class="aboutWrap rcenter">
+          <div class="aTitle">General</div>
+          <div class="aHead">
+            Project:<br>
+            Member:<br><br><br><br><br><br><br>
+            Course:<br>
+            Class:<br>
+            Group:<br>
+            Advisor:<br>
+            Rev:<br>
+          </div>
+          <div class="aInfo">
+            3-Sensor System<br>
+            [2211263] Pham Gia Huy<br>
+            [2210806] Phan Anh Duc<br>
+            [2213956] Bui Quang Vinh<br>
+            [2212926] Truong Dinh Sieu<br>
+            [2210288] Vo Duc Bao<br>
+            [2213227] Dinh Cao Thien<br>
+            [2214004] Phan Anh Vu<br>
+            [EE3005] Industrial Instrumentation<br>
+            TN01<br>
+            03<br>
+            MS. Nguyen Duc Hoang<br>
+            3.2.1<br>
+          </div>
+          <div class="aTitle">Details</div>
+          <div class="aHead">
+            GUI:<br>
+            MCU:<br><br>
+            PCB:<br>
+            Thermistor:<br>
+            Loadcell:<br>
+            Potentiometer:<br>
+          </div>
+          <div class="aInfo">
+            Pham Gia Huy<br>
+            Bui Quang Vinh<br>
+            Truong Dinh Sieu<br>
+            Phan Anh Duc<br>
+            Vo Duc Bao<br>
+            Dinh Cao Thien<br>
+            Phan Anh Vu<br>
+          </div>
+          <div class="aTitle">Microcontroller</div>
+          <div class="aHead">
+            Name:<br>
+            Input:<br>
+            Output:<br>
+            Source:<br>
+          </div>
+          <div class="aInfo">
+            ESP32<br>
+            PA0<br>
+            PB0<br>
+            5V<br>
+          </div>
+          <div class="aTitle">Thermistor</div>
+          <div class="aHead">
+            Name:<br>
+            Input:<br>
+            Output:<br>
+            Source:<br>
+          </div>
+          <div class="aInfo">
+            Pt100<br>
+            0 ÷ 100 (°C)<br>
+            0.1 ÷ 3.1 (V)<br>
+            5V<br>
+          </div>
+          <div class="aTitle">Loadcell</div>
+          <div class="aHead">
+            Name:<br>
+            Input:<br>
+            Output:<br>
+            Source:<br>
+          </div>
+          <div class="aInfo">
+            Loadcell<br>
+            0 ÷ 5 (kg)<br>
+            0.1 ÷ 3.1 (V)<br>
+            5V<br>
+          </div>
+          <div class="aTitle">Potentiometer</div>
+          <div class="aHead">
+            Name:<br>
+            Input:<br>
+            Output:<br>
+            Source:<br>
+          </div>
+          <div class="aInfo">
+            Potentiometer<br>
+            0 ÷ 300 (°)<br>
+            0.1 ÷ 3.1 (V)<br>
+            5V<br>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    const sensorContainer = document.getElementById("sensorContainer");
-
-    // Create UI for sensors dynamically
-    const sensors = {};
-    for (let i = 1; i <= 3; i++) {
-      const card = document.createElement("div");
-      card.className = "sensor-card";
-      card.innerHTML = `
-        <h3>Sensor ${i}</h3>
-        <p>ID: <span id="sensorID${i}">${i}</span></p>
-        <p>Name: <span id="sensorName${i}">Sensor ${i}</span></p>
-        <p>Value: <span id="sensorValue${i}">N/A</span></p>
-        <p>Zero: <span id="oldCalibZero${i}">N/A</span></p>
-        <p>Span: <span id="oldCalibSpand${i}">N/A</span></p>
-      `;
-      sensorContainer.appendChild(card);
-      sensors[i] = card;
-    }
-
-    // Listen for incoming sensor data
-    socket.on("modbusData", (data) => {
-      if (data.sensors && Array.isArray(data.sensors)) {
-        data.sensors.forEach((sensor) => {
-          const { id, sensorValue, calibZero, calibSpand } = sensor;
-          if (sensors[id]) {
-            document.getElementById(`sensorValue${id}`).innerText = sensorValue;
-            document.getElementById(`oldCalibZero${id}`).innerText = calibZero;
-            document.getElementById(`oldCalibSpand${id}`).innerText = calibSpand;
-            document.getElementById(`sensorName${id}`).innerText = sensor.name; // cập nhật name
-          }
-        });
-      }
-    });
-
-    // Handle calibration form submission
-    document.getElementById("calibForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-      const sensorId = parseInt(document.getElementById("sensorIdSelect").value, 10);
-      const calibZero = parseInt(document.getElementById("calibZero").value, 10);
-      const calibSpand = parseInt(document.getElementById("calibSpand").value, 10);
-      const name = document.getElementById("sensorNameInput").value; // <-- FIXED LINE
-      socket.emit("calibrationData", { sensorId, calibZero, calibSpand, name });
-      this.reset();
-    });
-
-    // Handle interrupt button
-    document.getElementById("interruptBtn").addEventListener("click", () => {
-      socket.emit("triggerInterrupt");
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="main.js"></script>
 </body>
+
 </html>

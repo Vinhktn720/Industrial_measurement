@@ -62,11 +62,7 @@ document.querySelectorAll('.sect > *').forEach(btn =>
 
 // Sensor selection for Calibration
 document.querySelectorAll(".page").forEach((e, i) => {
-  e.addEventListener("click", () => {
-    document.querySelectorAll('.page').forEach((e, j) => e.classList.toggle('active' , j == i));
-    swiper.slideTo(i);
-    document.getElementById("sensorNameInput").value = document.getElementById(`sensorName${i + 1}`).textContent;
-  });
+  e.addEventListener("click", () => swiper.slideTo(i));
 });
 
 // ====================================================== UPDATE ====================================================== //
@@ -77,14 +73,13 @@ setInterval(() => {
   now = new Date(),
   opt = {weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'};
   for(let i = 0; i < 3; i++) {
-    let val  = +document.getElementById(`sensorValue${i + 1}`).textContent.split(' ')[0];
-    updateChr(sensorChart[i], cnt, val);
-    document.querySelectorAll('.page')[i].classList.toggle('active' , i == swiper.activeIndex);
+    let val  = document.getElementById(`sensorValue${i + 1}`).textContent;
+    updateChr(sensorChart[i], cnt, +val.split(' ')[0]);
     document.querySelectorAll('.cardDate p')[i].textContent = now.toLocaleDateString('en-GB', opt);
     document.querySelectorAll('.cardTime p')[i].textContent = now.toLocaleTimeString('en-GB', {hour12: false});
     document.querySelectorAll('.cardCnt  p')[i].textContent = scnt;
     const log = document.querySelectorAll('.cardLog')[i].querySelector('div');
-    log.innerHTML = `<p><span>${scnt}</span><span>${val}${ssPre[i + 1]}</span></p>` + log.innerHTML;
+    log.innerHTML = `<p><span>${scnt}</span><span>${val}</span></p>` + log.innerHTML;
 
   }
 }, 1000);
@@ -122,7 +117,7 @@ for(let i = 0; i < 3; i++) {
           interaction: { mode: 'nearest', intersect: false },
           scales: {
               x: { type: 'linear', title: { display: true, text: 'Time (seconds)' } },
-              y: { title: { display: true, text: 'Value' } }
+              y: { min: 1000, max: 0, title: { display: true, text: 'Value' } }
           },
           maintainAspectRatio: false,
           plugins: {
@@ -135,15 +130,21 @@ for(let i = 0; i < 3; i++) {
               }
             }
           }
-        }
+        },
       };
   const chart = new Chart(ctx, config);
   sensorChart[i] = {chart, data};
 }
 
+let bnd = 0;
+
 function updateChr(chr, time, val) {
+  chr.chart.config._config.options.scales.y.min = Math.min(chr.chart.config._config.options.scales.y.min, val - 1);
+  chr.chart.config._config.options.scales.y.max = Math.max(chr.chart.config._config.options.scales.y.max, val + 1);
   chr.data.labels.push(time);
   chr.data.datasets[0].data.push(val);
+  chr.chart.config._config.options.scales.x.min = Math.max(0, time - 100);
+  chr.chart.config._config.options.scales.x.max = time;
   chr.chart.update();
 }
 
@@ -162,16 +163,17 @@ var swiper = new Swiper(".slider", {
   navigation: {nextEl: ".nextBtn", prevEl: ".prevBtn"},
   on: {
     activeIndexChange: function () {
-      console.log('Active index changed to:', this.activeIndex);
-    },
-    slideChange: function () {
-      console.log('Slide changed. Current slide index:', this.activeIndex);
+      document.querySelectorAll('.page').forEach((e, i) => e.classList.toggle('active' , i == this.realIndex));
+      setTimeout(() => {
+        document.querySelector('select').value = document.getElementById(`sensorName${this.realIndex + 1}`).textContent;
+      }, 1100 * (!cnt));
     }
   }
 });
 
 // =============================================== MODBUS COMMUNICATION =============================================== //
 
+let updcalib = 0;
 const socket = io();
  // Listen for incoming sensor data
  socket.on("modbusData", (data) => {
@@ -179,7 +181,8 @@ const socket = io();
     data.sensors.forEach((sensor) => {
       const { id, sensorValue, calibZero, calibSpand, name } = sensor;
       if (sensors[id]) {
-        document.getElementById(`sensorValue${id}`).innerText = sensorValue + ssPre[ssName.indexOf(name)];
+        let val = 
+        document.getElementById(`sensorValue${id}`).innerText = Number(sensorValue.toFixed(2)) + ssPre[ssName.indexOf(name)];
         document.getElementById(`oldCalibZero${id}`).innerText = calibZero;
         document.getElementById(`oldCalibSpan${id}`).innerText = calibSpand;
         document.getElementById(`sensorName${id}`).innerText = name;
@@ -190,10 +193,11 @@ const socket = io();
 
 // Handle calibration form submission
 document.getElementById('submitBtn').addEventListener('click', function () {
-  const sensorId   = swiper.activeIndex + 1;
-  const calibZero  = Number(document.getElementById("calibZero").value);
-  const calibSpand = Number(document.getElementById("calibSpan").value);
+  const sensorId   = swiper.realIndex + 1;
+  const calibZero  = +(document.getElementById("calibZero").value || document.getElementById(`oldCalibZero${sensorId}`).innerText);
+  const calibSpand = +(document.getElementById("calibSpan").value || document.getElementById(`oldCalibSpan${sensorId}`).innerText);
   const name = document.getElementById("sensorNameInput").value;
+  console.log(calibZero, calibSpand);
   socket.emit("calibrationData", { sensorId, calibZero, calibSpand, name });
 });
 

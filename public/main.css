@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: "Sniglet";
+  font-family: "Merriweather Sans";
   color:aliceblue;
 }
 
@@ -148,7 +148,7 @@ i {
 
 .sensorCard p {
   padding-right: 5px;
-  font-family: "Titan One";
+  font-family: "Russo One";
   text-align: right;
   font-size: 2rem;
 }
@@ -297,7 +297,7 @@ select {
   background-color: aliceblue;
   border: 1px solid #333;
   border-radius: 20px;
-  font-family: "Titan One";
+  font-family: "Russo One";
   font-size: 1rem;
 }
 
@@ -316,7 +316,7 @@ select {
   background-color: aliceblue;
   outline: none;
   z-index: 1111;
-  font-family: "Sniglet";
+  font-family: "Merriweather Sans";
 }
 
 .filinfo input::selection {

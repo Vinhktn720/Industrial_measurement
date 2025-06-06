@@ -1,7 +1,11 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import { startPolling, writeCalibrationData, triggerInterrupt } from './testModbusHandler.js';
+import { startPolling, writeCalibrationData, triggerInterrupt } from './modbusHandler.js';
+import os from 'os';
+
+const PORT = 3000;
+const HOST = '0.0.0.0';
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -18,11 +22,13 @@ io.on('connection', (clientSocket) => {
   // Send Modbus data to the UI
   startPolling((modbusData) => {
     io.emit('modbusData', modbusData);
+    // console.log("Modbus data sent to UI:", modbusData);
   });
 
   // Handle calibration data from the UI
   clientSocket.on('calibrationData', async (data) => {
     const { sensorId, calibZero, calibSpand, name } = data;
+
     await writeCalibrationData(sensorId, calibZero, calibSpand, name);
   });
 
@@ -33,6 +39,15 @@ io.on('connection', (clientSocket) => {
 });
 
 // Start HTTP server on port 3000
-httpServer.listen(3000, () => {
-  console.log("Server listening on port 3000");
+httpServer.listen(PORT, HOST, () => {
+  const interfaces = os.networkInterfaces();
+  console.log(`🟢 Server is listening on:`);
+
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        console.log(`👉 http://${iface.address}:${PORT}`);
+      }
+    }
+  }
 });
